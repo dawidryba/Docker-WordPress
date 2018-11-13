@@ -2,6 +2,13 @@
 
 Please read this section espacially if you are unfamiliar with Docker.
 
+## Alias WP-CLI ##
+```
+#!bash
+
+alias wp="docker-compose run --rm --user 33:33 wpcli"
+```
+
 ## Docker ##
 
 ### Installation ###

@@ -1,4 +1,4 @@
-version: '2'
+version: '3.5'
 services:
     wordpress:
         build:
@@ -9,14 +9,15 @@ services:
             - mailhog
         ports:
             - 80:80
-        domainname: env.localhost
-        hostname: env
+        domainname: test.localhost
+        hostname: test
         volumes:
             - ./public:/var/www/html
             - ./wp.sh:/var/www/html/wp.sh
             - ./phpconf.ini:/usr/local/etc/php/conf.d/phpconf.ini
         environment:
             WORDPRESS_DB_PASSWORD: docker
+            WORDPRESS_DEBUG: 1
         depends_on:
             - mailhog
             - db
@@ -28,16 +29,30 @@ services:
             - 8025:8025
 
     wpcli:
-        image: tatemz/wp-cli
-        volumes_from:
-            - wordpress
+        image: wordpress:cli
+        volumes:
+            - ./public:/var/www/html
         links:
             - db:mysql
-        command: "sh wp.sh"
 
     db:
         image: mysql
+        command: --default-authentication-plugin=mysql_native_password
         ports:
-            - 3306:3306
+            - 3306
         environment:
             MYSQL_ROOT_PASSWORD: docker
+        volumes:
+            - ./db-data:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports: 
+            - 81:80
+        environment:
+            PMA_ARBITRARY: 1
+            PMA_HOST: db
+
+        restart: always
+        depends_on:
+            - db

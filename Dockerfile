@@ -1,9 +1,9 @@
-FROM wordpress:php7.0
+FROM wordpress:php7.2
 RUN curl --location --output /usr/local/bin/mhsendmail https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 && \
     chmod +x /usr/local/bin/mhsendmail
 
-ENV XDEBUG_VERSION 2.5.0
-ENV XDEBUG_SHA1 0d31602a6ee2ba6d2e18a6db79bdb9a2a706bcd9
+ENV XDEBUG_VERSION 2.7.0beta1
+ENV XDEBUG_SHA1 bc73f46aabf258e517acf36993765d1fc0563d78
 
 RUN set -x \
 	&& curl -SL "http://www.xdebug.org/files/xdebug-$XDEBUG_VERSION.tgz" -o xdebug.tgz \
@@ -23,7 +23,7 @@ RUN apt-get update && \
 	apt-get install -y libcurl4-gnutls-dev && docker-php-ext-configure curl && docker-php-ext-install curl && \
 	apt-get install -y zlib1g-dev libicu-dev g++ && docker-php-ext-configure intl && docker-php-ext-install intl && \
 	apt-get install -y libxml++2.6-dev && docker-php-ext-install xml && \
-	apt-get install -y libmcrypt-dev && docker-php-ext-install mcrypt && \
+#	apt-get install -y libmcrypt-dev && docker-php-ext-install mcrypt && \
 	docker-php-ext-install json && \
 	docker-php-ext-install mbstring && \
 	docker-php-ext-install soap && \
