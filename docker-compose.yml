@@ -32,12 +32,13 @@ services:
 
     wpcli:
         image: wordpress:cli
+        user: "33"
         volumes:
             - ./public:/var/www/html
-        command: wp core install --path="/var/www/html" --url=${WORDPRESS_URL} --title="${WORDPRESS_TITLE}" --admin_user=${ADMIN_USER} --admin_password=${ADMIN_PASSWORD} --admin_email=${ADMIN_EMAIL}
-        restart: on_failure
+        command: sh -c 'wp core install --path="/var/www/html" --url=${WORDPRESS_URL} --title="${WORDPRESS_TITLE}" --admin_user=${ADMIN_USER} --admin_password=${ADMIN_PASSWORD} --admin_email="${ADMIN_EMAIL}" &&  wp language core install pl_PL && wp site switch-language pl_PL'
         links:
             - db:mysql
+        restart: on-failure
         depends_on: 
             - db
             - wordpress
