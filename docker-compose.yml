@@ -9,11 +9,13 @@ services:
             - mailhog
         ports:
             - 80:80
-        domainname: test.localhost
-        hostname: test
+        domainname: ${WORDPRESS_URL}
+        hostname: ${WORDPRESS_URL}
         volumes:
             - ./public:/var/www/html
-            - ./wp.sh:/var/www/html/wp.sh
+            - ./wordpress/themes:/var/www/html/wp-content/themes:rw
+            - ./wordpress/plugins:/var/www/html/wp-content/plugins:rw
+            - ./wordpress/uploads:/var/www/html/wp-content/uploads:rw
             - ./phpconf.ini:/usr/local/etc/php/conf.d/phpconf.ini
         environment:
             WORDPRESS_DB_PASSWORD: docker
@@ -32,8 +34,13 @@ services:
         image: wordpress:cli
         volumes:
             - ./public:/var/www/html
+        command: wp core install --path="/var/www/html" --url=${WORDPRESS_URL} --title="${WORDPRESS_TITLE}" --admin_user=${ADMIN_USER} --admin_password=${ADMIN_PASSWORD} --admin_email=${ADMIN_EMAIL}
+        restart: on_failure
         links:
             - db:mysql
+        depends_on: 
+            - db
+            - wordpress
 
     db:
         image: mysql
@@ -52,7 +59,5 @@ services:
         environment:
             PMA_ARBITRARY: 1
             PMA_HOST: db
-
-        restart: always
         depends_on:
             - db
